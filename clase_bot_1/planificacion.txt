@@ -1,0 +1,47 @@
+Diagrama https://app.diagrams.net/
+
+FX por separado
+- autenticacion a primary
+
+- creo la base de datos si es que no esta creda (tabla to-do, operaciones, ordenes)
+
+- veo la tabla de to-do
+
+- si hay algo en to-do
+
+while
+
+- veo si tiene tasa objetivo
+
+
+- pido data de caucion, tomo la OPERACION. si no tiene tasa objetivo, mi tasa va a ser la punta del bid
+
+- reviso el volumen del bid y parto el total, si mi volumen es menor al 50% de la punta, tiro orden entera, sino, tiro
+en partes y nunca puede ser superior al 50% de la punta
+
+- tiro orden
+
+- espero unos segundos y la consulto
+
+- si esta pendiente, espero unos segundos
+
+otro while mientras estemos en el to do
+- si la orden se completa, tiro la otra hasta que quede finalizada la OPERACION
+
+- si no se completa, sigo esperando tiemop indefinido
+
+- cada iteracion vuelvo a consultar a la base de datos si sigue estando la OPERACION en to-do como to-do, si esta como "finalizar"
+cancelo la orden, consulto la orden, anoto en la base de datos y vuelvo al while inicial
+
+- si la orden se completa, anoto en la base de datos y vuelvo al while inicial
+
+
+Base de datos
+- operaciones
+- ordenes
+- realizado
+
+
+
+
+
