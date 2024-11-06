@@ -35,10 +35,10 @@ class PyRofexClient:
         self.load_credentials()
         self.authenticate()
 
-        # Para la market data
-        self.market_data_cache = {}  # Para almacenar los últimos datos recibidos
-        self.running = False  # Control flag para el hilo
-        self.execution_running = False  # Control flag para el hilo de ejecución
+        # # Para la market data
+        # self.market_data_cache = {}  # Para almacenar los últimos datos recibidos
+        # self.running = False  # Control flag para el hilo
+        # self.execution_running = False  # Control flag para el hilo de ejecución
 
     def load_credentials(self):
         """
@@ -59,8 +59,7 @@ class PyRofexClient:
         print("Authenticated successfully.")
 
     ### INSTRUMENTS
-    def get_and_save_instruments(self, filename="instruments_detailed.json"):
-        # instruments = pyRofex.get_all_instruments()
+    def get_instruments_and_save(self, filename='instruments_detailed.json'):
         instruments = pyRofex.get_detailed_instruments()
         with open(filename, 'w') as file:
             json.dump(instruments, file, indent=4)
@@ -93,10 +92,10 @@ class PyRofexClient:
         print(f"Market order placed: {order}")
         return order
 
-    def query_order(self, client_order_id, proprietary='ISV_PBCP'):
-        order_status = pyRofex.get_order_status(client_order_id=client_order_id, proprietary=proprietary)
-        print(f"Order status: {order_status}")
-        return order_status
+    def consultar_orden(self, client_order_id, proprietary='ISV_PBCP'):
+        data_orden = pyRofex.get_order_status(client_order_id=client_order_id, proprietary=proprietary)
+        print(f"Order status: {data_orden}")
+        return data_orden
 
     def cancel_order(self, client_order_id, proprietary='ISV_PBCP'):
         cancel_response = pyRofex.cancel_order(client_order_id=client_order_id, proprietary=proprietary)
