@@ -338,7 +338,7 @@ if __name__ == '__main__':
 
     # INSERTAMOS UN TO-DO
     conn = create_connection()
-    add_todo(conn, 10000)
+    add_todo(conn, 10000000)
 
     # INSERTAMOS SYMOLS A INSTRUMENTS
     symbols = ['DLR/NOV24', 'DLR/DIC24', 'DLR/ENE25']

@@ -3,7 +3,7 @@ from clase_primary.clase_pyrofex import PyRofexClient
 import pyRofex
 import time
 import json
-
+import random
 # bot.py
 class TradingBot(PyRofexClient):
     def __init__(self, config_file="keys.json", descargar_instruments=False):
@@ -39,15 +39,15 @@ class TradingBot(PyRofexClient):
         for p in pending:
             if p["status"] == "pendiente":
 
-                self.symbols = self.db.query_instruments()  # get instruments de sql
+                # self.symbols = self.db.query_instruments()  # get instruments de sql
 
-                self.get_data_instruments()  # obtengo la data de los symbols
-                self.build_ddbb_precios()  # Obtengo puntas de precios
+                # self.get_data_instruments()  # obtengo la data de los symbols
+                # self.build_ddbb_precios()  # Obtengo puntas de precios
 
-                data_symbols = {'DLR/ENE25': {'tick_price': 0.5, 'tick_size': 1.0, 'vencimiento': '2025-01-31'},
+                self.data_symbols = {'DLR/ENE25': {'tick_price': 0.5, 'tick_size': 1.0, 'vencimiento': '2025-01-31'},
                                 'DLR/NOV24': {'tick_price': 0.5, 'tick_size': 1.0, 'vencimiento': '2024-11-29'},
                                 'DLR/DIC24': {'tick_price': 0.5, 'tick_size': 1.0, 'vencimiento': '2024-12-30'}}
-                ddbb_precios = {'DLR/ENE25': {'OF': [{'price': 1081.0, 'size': 90}], 'LA': None,
+                self.ddbb_precios = {'DLR/ENE25': {'OF': [{'price': 1081.0, 'size': 90}], 'LA': None,
                                               'BI': [{'price': 1080.5, 'size': 350}]},
                                 'DLR/NOV24': {'OF': [{'price': 1018.0, 'size': 5053}], 'LA': None,
                                               'BI': [{'price': 1017.0, 'size': 7534}]},
@@ -75,11 +75,16 @@ class TradingBot(PyRofexClient):
                 if size < 1:  # si el size es menor a 1, no hago nada
                     continue
 
-                orden = self.place_limit_order(ticker=symbol, price=price, size=size, side=pyRofex.Side.BUY)
+                # orden = self.place_limit_order(ticker=symbol, price=price, size=size, side=pyRofex.Side.BUY)
                 # print(orden)
 
+                client_id = str(random.randint(100000, 999999))
+
                 # Guardo en la DDBB
-                insertar_orden = self.db.insert_order(client_id=orden['order']['clientId'], id_todo=id_todo, symbol=symbol)
+                insertar_orden = self.db.insert_order(
+                    # client_id=orden['order']['clientId'],
+                    client_id=client_id,
+                    id_todo=id_todo, symbol=symbol)
                 if not insertar_orden:
                     print("Error al actualizar la DDBB")
 
@@ -105,8 +110,34 @@ class TradingBot(PyRofexClient):
                     continue
                 else:
                     client_id = orden_sql['clientId']
-                    orden = self.consultar_orden(client_order_id=client_id)
-                    print(orden)
+                    # orden = self.consultar_orden(client_order_id=client_id)
+                    # print(orden)
+
+                    # Orden modelo para la base de datos
+                    orden = {
+                        "status": "OK",
+                        "order": {
+                            "orderId": "1130835",
+                            # "clOrdId": "user1145712381052053",
+                            "clOrdId": client_id,
+                            "proprietary":"PBCP",
+                            "execId":"160229133429-fix1-493",
+                            "accountId":{ "id":"10" },
+                            "instrumentId":{ "marketId":"ROFX", "symbol":"DLR/DIC23" },
+                            "price":183,
+                            "orderQty":10,
+                            "ordType":"LIMIT",
+                            "side":"BUY",
+                            "timeInForce":"DAY",
+                            "transactTime":"20160304-17:37:35",
+                            "avgPx":0,
+                            "lastPx":0,
+                            "lastQty":0,
+                            "cumQty":0,
+                            "leavesQty":10,
+                            "status":"FILLED",
+                            "text":"Aceptada" } }
+
                     actualizar_ddbb = self.db.update_order(id_operacion=orden_sql['id_operacion'], orden_response=orden)
                     if not actualizar_ddbb:
                         print("Error al actualizar la DDBB")
